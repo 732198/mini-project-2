@@ -23,8 +23,9 @@ breakdown of what you've spent versus what you planned.
 
 ## Live Site
 
-[View on GitHub Pages](#) ← replace with your actual link after deploying
+https://github.com/732198/mini-project-2
 
+not live yet
 ---
 
 ## What I Learned
