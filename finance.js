@@ -2,9 +2,6 @@ const CATEGORIES = ['Food', 'Transport', 'Housing', 'Healthcare', 'Entertainment
 
 let state = loadState();
 
-
-// ── localStorage ───────────────────────────────────────────
-// Load saved data from the browser when the page opens
 function loadState() {
   const saved = localStorage.getItem('pf_state');
   if (saved) {
@@ -13,13 +10,11 @@ function loadState() {
   return { budgets: {}, expenses: [] };
 }
 
-// Save data to the browser so it survives a refresh
 function saveState() {
   localStorage.setItem('pf_state', JSON.stringify(state));
 }
 
 
-// ── Populate the dropdowns ─────────────────────────────────
 function initSelects() {
   const options = CATEGORIES.map(c => `<option value="${c}">${c}</option>`).join('');
   document.getElementById('b-cat').innerHTML = options;
@@ -27,12 +22,10 @@ function initSelects() {
 }
 
 
-// ── Button actions ─────────────────────────────────────────
 function setBudget() {
   const cat = document.getElementById('b-cat').value;
   const amt = parseFloat(document.getElementById('b-amt').value);
 
-  // Stop if the amount is missing or not a positive number
   if (!amt || amt <= 0) {
     document.getElementById('b-err').textContent = 'Enter a valid amount greater than zero.';
     return;
@@ -50,7 +43,6 @@ function addExpense() {
   const cat  = document.getElementById('e-cat').value;
   const note = document.getElementById('e-note').value.trim();
 
-  // Stop if the amount is missing or not a positive number
   if (!amt || amt <= 0) {
     document.getElementById('e-err').textContent = 'Enter a valid amount greater than zero.';
     return;
@@ -58,16 +50,14 @@ function addExpense() {
 
   document.getElementById('e-err').textContent = '';
 
-  // Add the new expense to the list
   state.expenses.push({
-    id:   Date.now(),  // unique number based on current time
+    id:   Date.now(),  
     amt,
     cat,
     note,
     date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
   });
 
-  // Clear the form inputs
   document.getElementById('e-amt').value  = '';
   document.getElementById('e-note').value = '';
   saveState();
@@ -75,7 +65,6 @@ function addExpense() {
 }
 
 function deleteExpense(id) {
-  // Keep every expense except the one with this id
   state.expenses = state.expenses.filter(e => e.id !== id);
   saveState();
   render();
@@ -88,9 +77,6 @@ function resetAll() {
   render();
 }
 
-
-// ── Render: update every part of the page ─────────────────
-// This runs after every action and rewrites the UI from scratch
 function render() {
   // ── Summary numbers at the top ──
   const totalBudget = Object.values(state.budgets).reduce((sum, v) => sum + v, 0);
@@ -101,7 +87,6 @@ function render() {
   document.getElementById('m-spent').textContent     = '$' + totalSpent.toFixed(2);
   document.getElementById('m-remaining').textContent = '$' + remaining.toFixed(2);
 
-  // Color the remaining balance red if over budget, green if under
   const remEl = document.getElementById('m-remaining');
   if (remaining < 0) {
     remEl.className = 'metric-val danger';
@@ -111,10 +96,8 @@ function render() {
     remEl.className = 'metric-val';
   }
 
-  // ── Budget breakdown ──
   const catList = document.getElementById('cat-list');
 
-  // Only show categories that have a budget OR at least one expense
   const activeCats = CATEGORIES.filter(cat =>
     state.budgets[cat] || state.expenses.some(e => e.cat === cat)
   );
@@ -148,13 +131,11 @@ function render() {
     }).join('');
   }
 
-  // ── Expense log ──
   const expList = document.getElementById('exp-list');
 
   if (state.expenses.length === 0) {
     expList.innerHTML = '<p class="empty">No expenses yet.</p>';
   } else {
-    // Show newest expenses first by reversing the array
     expList.innerHTML = [...state.expenses].reverse().map(e => `
       <div class="exp-row">
         <span class="exp-cat-badge cat-${e.cat.toLowerCase()}">${e.cat}</span>
@@ -167,12 +148,9 @@ function render() {
 }
 
 
-// ── Wire up buttons ────────────────────────────────────────
 document.getElementById('set-budget-btn').addEventListener('click', setBudget);
 document.getElementById('add-expense-btn').addEventListener('click', addExpense);
 document.getElementById('reset-btn').addEventListener('click', resetAll);
 
-
-// ── Start the app ──────────────────────────────────────────
 initSelects();
 render();
