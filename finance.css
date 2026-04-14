@@ -47,7 +47,7 @@ body {
 .metric-val.ok     { color: #3b6d11; }
 .metric-val.danger { color: #a32d2d; }
 
-/* Cards */
+
 .card {
   background: #fff;
   border: 1px solid #e5e5e2;
